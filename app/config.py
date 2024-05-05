@@ -1,5 +1,5 @@
 import os
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic_settings import BaseSettings
 
@@ -7,13 +7,13 @@ from pydantic_settings import BaseSettings
 class Config(BaseSettings):
     app_host: str
     app_port: int
-    env: str
-
+    env: Literal['dev', 'prod']
     log_level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
-    cors_origin: str | None
+    cors_origin: Optional[list[str]]
 
-
-config = Config(
-    _env_file=os.getenv("ENV_FILE", ".env.local"),
-    _env_file_encoding="utf-8"
-)
+    @classmethod
+    def from_env(cls):
+        return Config(
+            _env_file=os.getenv("ENV_FILE", ".env.local"),
+            _env_file_encoding="utf-8"
+        )
