@@ -2,8 +2,8 @@ from typing import Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import BaseRepository
-from app.model import User
+from core.database.repository import BaseRepository
+from application.user.model import User
 
 
 class UserRepository(BaseRepository[User]):

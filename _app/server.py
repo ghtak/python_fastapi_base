@@ -7,21 +7,21 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from app.app_state import AppState
-from app.config import Config
-from app.database import Database
-from app.route import samples, sample
+from _app.app_state import AppState
+from _app.config import Config
+from _app.database import Database
+from _app.route import samples, sample
 
 
 def enable_custom_exception_handlers(app_: FastAPI):
-    # @app.exception_handler(Exception)
+    # @_app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exception: Exception):
         return JSONResponse(
             status_code=500,
             content={"message": f"{exception}"},
         )
 
-    # @app.exception_handler(RequestValidationError)
+    # @_app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exception: Exception):
         return JSONResponse(
             status_code=422,

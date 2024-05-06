@@ -5,8 +5,8 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker, AsyncConnection
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.config import Config
-from app.model import Base
+from _app.config import Config
+from _app.model import Base
 
 
 class Database:
@@ -58,7 +58,7 @@ async def get_transactional_session(database: DatabaseDepends) -> AsyncIterator[
     async with database.sessionmaker.begin() as session:
         yield session
 
-    # async with app_state.database.session() as session:
+    # async with core.database.session() as session:
     #     yield session
 
 

@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from app.database import Database
+from _app.database import Database
 
 
 @dataclass

@@ -3,9 +3,9 @@ from typing import Optional, Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import entity
-from app.database import AsyncScopedSessionDepends, get_scoped_session, DatabaseDepends
-from app.repository.user_repository import UserRepository
+from _app import entity
+from _app.database import AsyncScopedSessionDepends, get_scoped_session, DatabaseDepends
+from _app.repository.user_repository import UserRepository
 
 router = APIRouter(
     prefix="/sample/database",

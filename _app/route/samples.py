@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.app_state import AppState
+from _app.app_state import AppState
 
 router = APIRouter(
     prefix="/sample",
@@ -18,5 +18,5 @@ async def home():
 @router.get("/app_state")
 async def app_state_depend(app_state: Annotated[AppState, Depends()]):
     return {
-        "app_state": str(app_state)
+        "core": str(app_state)
     }
