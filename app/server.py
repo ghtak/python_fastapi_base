@@ -1,3 +1,4 @@
+import asyncio
 from typing import Annotated
 
 from fastapi import FastAPI, Depends, APIRouter
@@ -44,7 +45,7 @@ def init_routes(app_: FastAPI):
     app_.include_router(samples.router)
 
 
-def create_app() -> FastAPI:
+async def create_app() -> FastAPI:
     app_state = AppState(config=Config.from_env())
     app_state.init_logging()
 
@@ -58,6 +59,5 @@ def create_app() -> FastAPI:
 
     init_routes(app_)
     return app_
-
 
 app = create_app()
