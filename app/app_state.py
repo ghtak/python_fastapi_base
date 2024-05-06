@@ -1,22 +1,18 @@
 import logging
 from dataclasses import dataclass
-from typing import Annotated, AsyncIterator
+from typing import Any
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.config import Config
 from app.database import Database
 
 
 @dataclass
 class AppState:
-    config: Config
+    config: Any
     database: Database
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Any):
         self.config = config
-        self.database = Database(config=config)
+        self.database = Database(config)
 
     def init_logging(self):
         logging.basicConfig(
@@ -26,14 +22,4 @@ class AppState:
         )
 
 
-async def get_scoped_database_session(app_state: Annotated[AppState, Depends()]) \
-        -> AsyncIterator[AsyncSession]:
-    async with app_state.database.sessionmaker.begin() as session:
-        yield session
 
-    # async with app_state.database.session() as session:
-    #     yield session
-
-
-async def get_database_session(app_state: Annotated[AppState, Depends()]) -> AsyncSession:
-    return app_state.database.sessionmaker()

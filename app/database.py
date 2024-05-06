@@ -1,20 +1,19 @@
 import contextlib
-import logging
-from typing import AsyncIterator
+from typing import AsyncIterator, Annotated, Any
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker, AsyncConnection
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from app.config import Config
 from app.model import Base
-from app.model import User
 
 
 class Database:
     engine: AsyncEngine
     sessionmaker: async_sessionmaker
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Any):
         self.engine = create_async_engine(
             url=config.db_url,
         )
@@ -50,3 +49,23 @@ class Database:
             if drop:
                 await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
+
+
+DatabaseDepends = Annotated[Database, Depends()]
+
+
+async def get_transactional_session(database: DatabaseDepends) -> AsyncIterator[AsyncSession]:
+    async with database.sessionmaker.begin() as session:
+        yield session
+
+    # async with app_state.database.session() as session:
+    #     yield session
+
+
+async def get_scoped_session(database: DatabaseDepends) -> AsyncIterator[AsyncSession]:
+    async with database.sessionmaker() as session:
+        yield session
+
+
+AsyncTransactionalSessionDepends = Annotated[AsyncSession, Depends(get_transactional_session)]
+AsyncScopedSessionDepends = Annotated[AsyncSession, Depends(get_scoped_session)]

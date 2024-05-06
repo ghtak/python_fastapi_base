@@ -1,6 +1,6 @@
 import os
 from enum import Enum
-from typing import Literal, Optional
+from typing import Literal, Optional, Type
 
 from pydantic_settings import BaseSettings
 
@@ -20,9 +20,10 @@ class Config(BaseSettings):
     cors_origin: Optional[list[str]]
     db_url: str
 
-    @classmethod
-    def from_env(cls):
+    @staticmethod
+    def from_env():
         return Config(
             _env_file=os.getenv("ENV_FILE", ".env.local"),
             _env_file_encoding="utf-8"
         )
+

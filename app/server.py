@@ -9,7 +9,8 @@ from starlette.responses import JSONResponse
 
 from app.app_state import AppState
 from app.config import Config
-from app.route import samples
+from app.database import Database
+from app.route import samples, sample
 
 
 def enable_custom_exception_handlers(app_: FastAPI):
@@ -43,14 +44,16 @@ def enable_cors(app_: FastAPI, cors_origin: list[str]):
 
 def init_routes(app_: FastAPI):
     app_.include_router(samples.router)
+    app_.include_router(sample.database.router)
 
 
-async def create_app() -> FastAPI:
+def create_app() -> FastAPI:
     app_state = AppState(config=Config.from_env())
     app_state.init_logging()
 
     app_ = FastAPI()
     app_.dependency_overrides[AppState] = lambda: app_state
+    app_.dependency_overrides[Database] = lambda: app_state.database
 
     enable_custom_exception_handlers(app_)
 
@@ -59,5 +62,6 @@ async def create_app() -> FastAPI:
 
     init_routes(app_)
     return app_
+
 
 app = create_app()
