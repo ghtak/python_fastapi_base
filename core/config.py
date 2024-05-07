@@ -23,7 +23,8 @@ class Config(BaseSettings):
     log_level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
     log_dir: str
     cors_origin: Optional[list[str]]
-    db_url: str
+    primary_db_url: str
+    secondary_db_url: str
 
     @staticmethod
     @lru_cache
