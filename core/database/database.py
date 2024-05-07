@@ -25,10 +25,15 @@ class Database:
 
     @classmethod
     def init(cls, config: Config):
+        engine_config = {
+            # "pool_size": 20,
+            # "max_overflow": 5,
+            "echo": True
+        }
         Database.primary_engine = create_async_engine(url=config.primary_db_url,
-                                                      echo=True)
+                                                      **engine_config)
         Database.secondary_engine = create_async_engine(url=config.secondary_db_url,
-                                                        echo=True)
+                                                        **engine_config)
         Database.sessionmaker = async_sessionmaker(
             sync_session_class=RoutingSession,
             expire_on_commit=False,
