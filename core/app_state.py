@@ -10,7 +10,7 @@ class AppState:
 
     @lru_cache
     def __new__(cls):
-        """for AppStateDepends"""
+        """for DependsAppState"""
         return super().__new__(cls)
 
     @lru_cache

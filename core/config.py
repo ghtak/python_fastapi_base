@@ -12,6 +12,7 @@ class Env(str, Enum):
     DEV = "dev"
     STAGE = "stage"
     PROD = "prod"
+    TEST = "test"
 
 
 class Config(BaseSettings):

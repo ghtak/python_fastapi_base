@@ -17,14 +17,16 @@ class BaseRepository(Generic[ModelType]):
         self.session = session
 
     async def get_by_id(self, model_id: int) -> Optional[ModelType]:
-        if hasattr(self.model, "id"):
-            q = select(self.model.id == model_id)
+        if hasattr(self.model, 'id'):
+            q = select(self.model).where(self.model.id == model_id)
             r = await self.session.execute(q)
             return r.scalars().first()
         return None
 
-    async def create(self, model: ModelType) -> None:
+    async def create(self, model: ModelType) -> ModelType:
         self.session.add(model)
+        await self.session.flush()
+        return model
 
     # async def find_by(self, **kwargs: dict[str, Any]) -> list[ModelType]:
     #     for k,v in kwargs:
