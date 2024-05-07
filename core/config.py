@@ -21,6 +21,7 @@ class Config(BaseSettings):
     app_host: str
     app_port: int
     log_level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+    log_dir: str
     cors_origin: Optional[list[str]]
     db_url: str
 
@@ -32,5 +33,3 @@ class Config(BaseSettings):
             _env_file_encoding="utf-8"
         )
 
-
-config: Config = Config.from_env()

@@ -3,26 +3,29 @@ from typing import Annotated, AsyncIterator
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.app_state import AppState
+# from core.app_state import AppState
 from core.database.database import Database
 
-DependsAppState = Annotated[AppState, Depends()]
 
+# DependsAppState = Annotated[AppState, Depends()]
+#
 
-async def get_database(app_state: DependsAppState) -> Database:
-    return app_state.database
+# async def get_database(app_state: DependsAppState) -> Database:
+#     return app_state.database
+#
+#
+# DependsDatabase = Annotated[Database, Depends(get_database)]
+#
 
-
-DependsDatabase = Annotated[Database, Depends(get_database)]
-
-
-async def get_transactional_session(database: DependsDatabase) -> AsyncIterator[AsyncSession]:
-    async with database.sessionmaker.begin() as session:
+# async def get_transactional_session(database: DependsDatabase) -> AsyncIterator[AsyncSession]:
+async def get_transactional_session() -> AsyncIterator[AsyncSession]:
+    async with Database.sessionmaker.begin() as session:
         yield session
 
 
-async def get_scoped_session(database: DependsDatabase) -> AsyncIterator[AsyncSession]:
-    async with database.sessionmaker() as session:
+# async def get_scoped_session(database: DependsDatabase) -> AsyncIterator[AsyncSession]:
+async def get_scoped_session() -> AsyncIterator[AsyncSession]:
+    async with Database.sessionmaker() as session:
         yield session
 
 

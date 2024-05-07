@@ -21,6 +21,7 @@ async def get_app_state(user_id: int,
         id=user_id))
     return user[0] if len(user) > 0 else None
 
+
 @router.get('/', response_model=Sequence[UserResponse])
 async def get_app_state(name: str,
                         usecase: DependsGetUserUsecase):

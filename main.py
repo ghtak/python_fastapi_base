@@ -4,8 +4,10 @@ import os
 import click
 import uvicorn
 
-from core.app_state import AppState
+from application.main import app
+from core.app_context import AppContext
 from core.config import Config, Env
+from core.database import Database
 
 
 @click.group()
@@ -16,16 +18,29 @@ def cli():
 @cli.command()
 @click.option('--drop', default=False)
 def init_db(drop: bool):
-    app_state = AppState()
-    app_state.init_logging()
-    asyncio.run(app_state.database.init_models(drop=drop))
+    AppContext.init_logging()
+    AppContext.logger.debug(AppContext.config)
+    Database.init(AppContext.config)
+    asyncio.run(Database.sync_models(drop=drop))
+
+
+@cli.command()
+def debug():
+    config = Config.from_env()
+    uvicorn.run(
+        app=app,
+        host=config.app_host,
+        port=config.app_port,
+        reload=True if os.getenv("ENV", Env.LOCAL.value) == Env.LOCAL.value else False,
+        workers=1
+    )
 
 
 @cli.command()
 def main():
     config = Config.from_env()
     uvicorn.run(
-        app="application.main:app",
+        app='application.main:app',
         host=config.app_host,
         port=config.app_port,
         reload=True if os.getenv("ENV", Env.LOCAL.value) == Env.LOCAL.value else False,
