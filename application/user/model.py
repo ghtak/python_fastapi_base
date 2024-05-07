@@ -3,10 +3,10 @@ from typing import Self
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core.database.database import Base
-from application.user.entity import User as UserEntity
+from application.user.entity import UserEntity
 
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
@@ -15,7 +15,7 @@ class User(Base):
 
     @classmethod
     def from_dict(cls, objs: dict) -> Self:
-        return User(**objs)
+        return UserModel(**objs)
 
     def to_entity(self) -> UserEntity:
         return UserEntity(

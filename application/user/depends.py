@@ -3,20 +3,20 @@ from typing import Annotated
 from fastapi import Depends
 
 from application.user.repository import UserRepository
-from application.user.usecase.create_user import CreateUserUsecase
-from application.user.usecase.get_user import GetUserUsecase
+from application.user.usecase.user_create import UserCreateUsecase
+from application.user.usecase.user_get import UserGetUsecase
 from core.depends import DependsAsyncTransactionalSession, DependsAsyncScopedSession
 
 
-async def get_create_user_usecase(session: DependsAsyncTransactionalSession) -> CreateUserUsecase:
-    return CreateUserUsecase(UserRepository(session))
+async def user_create_usecase(session: DependsAsyncTransactionalSession) -> UserCreateUsecase:
+    return UserCreateUsecase(UserRepository(session))
 
 
-DependsCreateUserUsecase = Annotated[CreateUserUsecase, Depends(get_create_user_usecase)]
+DependsUserCreateUsecase = Annotated[UserCreateUsecase, Depends(user_create_usecase)]
 
 
-async def get_get_user_usecase(session: DependsAsyncScopedSession) -> GetUserUsecase:
-    return GetUserUsecase(UserRepository(session))
+async def user_get_usecase(session: DependsAsyncScopedSession) -> UserGetUsecase:
+    return UserGetUsecase(UserRepository(session))
 
 
-DependsGetUserUsecase = Annotated[CreateUserUsecase, Depends(get_get_user_usecase)]
+DependsUserGetUsecase = Annotated[UserGetUsecase, Depends(user_get_usecase)]

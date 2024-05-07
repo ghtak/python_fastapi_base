@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class User(BaseModel):
+class UserEntity(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     username: str

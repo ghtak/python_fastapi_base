@@ -5,7 +5,6 @@ from sqlalchemy import Insert, Update, Delete
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine, AsyncConnection, AsyncSession
 from sqlalchemy.orm import declarative_base, Session
 
-from core.app_context import AppContext
 from core.config import Config
 
 Base = declarative_base()
@@ -62,7 +61,6 @@ class Database:
     @classmethod
     async def sync_models(cls, drop: bool = False):
         # import application models for sync
-        from application.user.model import User
         async with cls.connect() as conn:
             if drop:
                 await conn.run_sync(Base.metadata.drop_all)

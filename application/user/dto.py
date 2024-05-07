@@ -1,12 +1,12 @@
 from pydantic import BaseModel, ConfigDict
 
-from application.user.entity import User
+from application.user.entity import UserEntity
 
 
-class UserResponse(User):
+class UserDto(UserEntity):
     pass
 
 
-class CreateUserRequest(BaseModel):
+class UserCreateDto(BaseModel):
     username: str
     email: str
