@@ -28,6 +28,11 @@ class BaseRepository(Generic[ModelType]):
         await self.session.flush()
         return model
 
+    async def update(self, model: ModelType):
+        await self.session.merge(model)
+        await self.session.flush()
+        return model
+
     # async def find_by(self, **kwargs: dict[str, Any]) -> list[ModelType]:
     #     for k,v in kwargs:
     #
