@@ -3,10 +3,11 @@ from typing import Optional, Sequence
 from fastapi import APIRouter
 
 from application.user.depends import DependsUserCreateUsecase, DependsUserGetUsecase, DependsUserUpdateUsecase
-from application.user.dto import UserDto, UserCreateDto, UserUpdateDto
+from application.user.dto import UserDto, UserCreateDto, UserUpdateDto, UserDtoPaging
 from application.user.usecase.user_create import UserCreateCommand
 from application.user.usecase.user_get import UserGetCommand
 from application.user.usecase.user_udpate import UserUpdateCommand
+from core.database.paging import Paging
 
 router = APIRouter(
     prefix="/user",
@@ -21,10 +22,15 @@ async def user_get_by_id(user_id: int,
     return user[0] if len(user) > 0 else None
 
 
-@router.get('/', response_model=Sequence[UserDto])
+@router.get('/', response_model=UserDtoPaging)
 async def user_get_by_name(name: str,
                            usecase: DependsUserGetUsecase):
-    return await usecase.execute(UserGetCommand.by_name(name))
+    users = await usecase.execute(UserGetCommand.by_name(name))
+    return UserDtoPaging(
+        total=len(users),
+        page=1,
+        items=users
+    )
 
 
 @router.post('/', response_model=UserDto)
