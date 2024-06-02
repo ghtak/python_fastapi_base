@@ -5,8 +5,8 @@ from fastapi import APIRouter
 from application.user.depends import DependsUserCreateUsecase, DependsUserGetUsecase, DependsUserUpdateUsecase
 from application.user.dto import UserDto, UserCreateDto, UserUpdateDto
 from application.user.usecase.user_create import UserCreateCommand
-from application.user.usecase.user_get import UserGetCommand
 from application.user.usecase.user_udpate import UserUpdateCommand
+from core.dto import Paging
 
 router = APIRouter(
     prefix="/user",
@@ -14,17 +14,27 @@ router = APIRouter(
 )
 
 
+@router.get("/", response_model=Paging[UserDto])
+async def user_list(
+        usecase: DependsUserGetUsecase,
+        page: int,
+        count: int,
+):
+    return await usecase.users(page, count)
+
+
 @router.get('/{user_id:int}', response_model=Optional[UserDto])
 async def user_get_by_id(user_id: int,
                          usecase: DependsUserGetUsecase):
-    user = await usecase.execute(UserGetCommand.by_id(user_id))
-    return user[0] if len(user) > 0 else None
+    return await usecase.get_by_id(user_id)
 
 
-@router.get('/', response_model=Sequence[UserDto])
+@router.get('/{name:str}', response_model=Paging[UserDto])
 async def user_get_by_name(name: str,
+                           page: int,
+                           count: int,
                            usecase: DependsUserGetUsecase):
-    return await usecase.execute(UserGetCommand.by_name(name))
+    return await usecase.find_by_name(name, page, count)
 
 
 @router.post('/', response_model=UserDto)

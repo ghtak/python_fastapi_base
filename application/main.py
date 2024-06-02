@@ -50,7 +50,7 @@ def enable_cors(app_: FastAPI, cors_origin: list[str]) -> FastAPI:
 
 def create_app() -> FastAPI:
     AppContext.init_logging()
-    AppContext.logger.debug(AppContext.config)
+    # AppContext.logger.debug(AppContext.config)
 
     Database.init(AppContext.config)
 

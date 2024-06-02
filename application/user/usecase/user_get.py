@@ -2,28 +2,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, Self, Sequence
 
+from sqlalchemy import Select
+
 from application.user.entity import UserEntity
+from application.user.model import UserModel
 from application.user.repository import UserRepository
-
-
-class UserGetKind(int, Enum):
-    BY_ID = 0
-    BY_NAME = 1
-
-
-@dataclass
-class UserGetCommand:
-    kind: UserGetKind
-    id: Optional[int] = field(default=None)
-    name: Optional[str] = field(default=None)
-
-    @classmethod
-    def by_id(cls, id_: int) -> Self:
-        return cls(kind=UserGetKind.BY_ID, id=id_)
-
-    @classmethod
-    def by_name(cls, name: str) -> Self:
-        return cls(kind=UserGetKind.BY_NAME, name=name)
+from core.dto import Paging
 
 
 class UserGetUsecase:
@@ -32,18 +16,25 @@ class UserGetUsecase:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    async def execute(self, command: UserGetCommand) -> Sequence[UserEntity]:
-        if command.kind == UserGetKind.BY_ID:
-            user_entity = await self.get_by_id(command.id)
-            return [user_entity] if user_entity else []
-        elif command.kind == UserGetKind.BY_NAME:
-            return await self.find_by_name(command.name)
-        return []
+    async def users(self, page: int, count: int):
+        assert page > 0 and count > 0
+        total, selected = await self.user_repository.users(page, count)
+        return Paging[UserEntity](
+            total=total,
+            page=page,
+            items=list(map(lambda x: UserEntity.model_validate(x), selected))
+        )
 
     async def get_by_id(self, user_id: int) -> Optional[UserEntity]:
         user_model = await self.user_repository.get_by_id(user_id)
-        return user_model.to_entity() if user_model else None
+        return UserEntity.model_validate(user_model) if user_model else None
 
-    async def find_by_name(self, name: str) -> Sequence[UserEntity]:
-        selected = await self.user_repository.find_by_name(name)
-        return list(map(lambda x: x.to_entity(), selected))
+    async def find_by_name(self, name: str, page: int, count: int) -> Paging[UserEntity]:
+        assert page > 0 and count > 0
+
+        total, selected = await self.user_repository.find_by_name(name, page, count)
+        return Paging[UserEntity](
+            total=total,
+            page=page,
+            items=list(map(lambda x: UserEntity.model_validate(x), selected))
+        )

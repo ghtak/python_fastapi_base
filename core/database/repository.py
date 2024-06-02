@@ -1,7 +1,9 @@
-from typing import TypeVar, Generic, Type, Optional
+from typing import TypeVar, Generic, Type, Optional, Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, func, Select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.dto import Paging
 
 ModelType = TypeVar("ModelType")
 
@@ -32,6 +34,22 @@ class BaseRepository(Generic[ModelType]):
         await self.session.merge(model)
         await self.session.flush()
         return model
+
+    async def count(self, q: Optional[Select] = None):
+        if q is None:
+            r = await self.session.execute(select(func.count()).select_from(self.model))
+        else:
+            r = await self.session.execute(select(func.count()).select_from(q))
+        return r.scalar_one()
+
+    async def paginate(self, q: Select, page: int, count: int) -> Sequence[ModelType]:
+        assert page > 0
+        assert count > 0
+        r = await self.session.execute(
+            q.limit(count).offset((page - 1) * count)
+        )
+        return r.scalars().all()
+
 
     # async def find_by(self, **kwargs: dict[str, Any]) -> list[ModelType]:
     #     for k,v in kwargs:

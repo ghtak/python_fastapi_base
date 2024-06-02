@@ -31,7 +31,7 @@ def debug():
         app=app,
         host=config.app_host,
         port=config.app_port,
-        reload=True if os.getenv("ENV", Env.LOCAL.value) == Env.LOCAL.value else False,
+        reload=True,
         workers=1
     )
 
