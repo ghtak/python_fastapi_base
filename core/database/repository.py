@@ -35,11 +35,10 @@ class BaseRepository(Generic[ModelType]):
         await self.session.flush()
         return model
 
-    async def count(self, q: Optional[Select] = None):
-        if q is None:
-            r = await self.session.execute(select(func.count()).select_from(self.model))
-        else:
-            r = await self.session.execute(select(func.count()).select_from(q))
+    async def count(self, *criteria):
+        r = await self.session.execute(
+            select(func.count()).select_from(self.model).filter(*criteria)
+        )
         return r.scalar_one()
 
     async def paginate(self, q: Select, page: int, count: int) -> Sequence[ModelType]:
