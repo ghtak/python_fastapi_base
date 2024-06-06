@@ -7,10 +7,12 @@ from application.user.dto import UserDto, UserCreateDto, UserUpdateDto
 from application.user.usecase.user_create import UserCreateCommand
 from application.user.usecase.user_udpate import UserUpdateCommand
 from core.dto import Paging
+from core.logging_route import LoggingRoute
 
 router = APIRouter(
     prefix="/user",
-    tags=["/user"]
+    tags=["/user"],
+    route_class=LoggingRoute
 )
 
 

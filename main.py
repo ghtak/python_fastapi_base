@@ -4,10 +4,12 @@ import os
 import click
 import uvicorn
 
-from application.main import app
 from core.app_context import AppContext
 from core.config import Config, Env
 from core.database import Database
+
+# for init-db
+from application.user.model import *
 
 
 @click.group()
@@ -22,18 +24,6 @@ def init_db(drop: bool):
     AppContext.logger.debug(AppContext.config)
     Database.init(AppContext.config)
     asyncio.run(Database.sync_models(drop=drop))
-
-
-@cli.command()
-def debug():
-    config = Config.from_env()
-    uvicorn.run(
-        app=app,
-        host=config.app_host,
-        port=config.app_port,
-        reload=True,
-        workers=1
-    )
 
 
 @cli.command()

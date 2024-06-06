@@ -5,7 +5,6 @@ from sqlalchemy import Insert, Update, Delete
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine, AsyncConnection, AsyncSession
 from sqlalchemy.orm import declarative_base, Session
 
-from core.app_context import AppContext
 from core.config import Config
 
 Base = declarative_base()
